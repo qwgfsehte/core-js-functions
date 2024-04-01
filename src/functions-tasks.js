@@ -123,8 +123,11 @@ function getPolynom(...allCoefficients) {
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
-function memoize(/* func */) {
-  throw new Error('Not implemented');
+function memoize(func) {
+  const copyFunc = func();
+  return function newMemoize() {
+    return copyFunc;
+  };
 }
 
 /**
@@ -180,8 +183,18 @@ function retry(func, attempts) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return function newLogger(...args) {
+    const arrayString = [];
+    for (let i = 0; i < args.length; i += 1) {
+      arrayString.push(JSON.stringify(args[i]));
+    }
+    const allArgsString = arrayString.join(',');
+    logFunc(`${func.name}(${allArgsString}) starts`);
+    const result = func(...args);
+    logFunc(`${func.name}(${allArgsString}) ends`);
+    return result;
+  };
 }
 
 /**
